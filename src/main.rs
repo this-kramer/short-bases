@@ -17,27 +17,52 @@ fn main() {
     let g = gen_gadget_matrix(3, 5);
     println!("G");
     println!("{}", &g);
+
+    let (a, r) = gen_trap();
+
+    println!("R");
+    println!("{}", &r);
+
+    println!("A");
+    println!("{}", &a);
 }
 
 fn gen_trap() -> (Array2<u32>, Array2<i32>) {
-    let q: u32 = 31;
-    let n = 31;
-    let w = 4;
-    let m_bar = 31;
+    let q: u32 = 13;
+    // k = ceil(log(q))
     let k : usize = (32 - q.trailing_zeros()).try_into().unwrap();
+    // A=[A_bar|A_2] has dimension n x m
+    let n = 3;
+    // w #columns of of A_2
+    let w = n * k;
+    // A_bar has dimension n x m_bar
+    let m_bar = 3;
+    // m = m_bar + w
+    let m = m_bar + w;
+
+    assert!(m >= w); 
+    assert!(w >= n); 
     
     let g = gen_gadget_matrix(n, k);
+    let g = g.mapv(|x| i64::from(x));
     let a_bar = sample_a_bar(n, m_bar, q);
     let r = sample_r(m_bar, w);
 
     // todo multiplication mod q
-    let a = concatenate!(Axis(1), a_bar, g - a_bar.dot(&r));
+    let a_bar_i64 =a_bar.mapv(|x| i64::from(x)); 
+    let r_i64 = r.mapv(|x| i64::from(x));
+    let a_2 = g - a_bar_i64.dot(&r_i64);
+    let a_2 = a_2.mapv_into_any(|x| {
+        let x = x.rem_euclid(q.try_into().unwrap());
+        u32::try_from(x).unwrap()
+       });
+    let a = concatenate!(Axis(1), a_bar, a_2);
 
     (a, r)
 }
 
 fn gen_gadget_matrix(n: usize, k: usize) -> Array2<u32> {
-    let gadget = Array1::from_shape_fn((k), |i| 2u32.pow(i.try_into().unwrap()));
+    let gadget = Array1::from_shape_fn(k, |i| 2u32.pow(i.try_into().unwrap()));
     let mut g = Array2::zeros((n, n * k));
     for i in 0..n {
         let mut slice_for_gadget = g.slice_mut(s![i, k * i..(k * (i + 1))]);
