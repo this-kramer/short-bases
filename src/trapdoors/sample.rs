@@ -21,11 +21,9 @@ fn sample_element() -> i32 {
 
     if is_zero {
         0
+    } else if positive {
+        1
     } else {
-        if positive {
-            1
-        } else {
-            -1
-        }
+        -1
     }
 }

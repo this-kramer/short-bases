@@ -22,13 +22,13 @@ pub fn gen_trap() -> (Array2<u32>, Array2<i32>) {
     assert!(w >= n);
 
     let g = gadget::gen_gadget_matrix(n, k);
-    let g = g.mapv(|x| i64::from(x));
+    let g = g.mapv(i64::from);
     let a_bar = sample::sample_a_bar(n, m_bar, q);
     let r = sample::sample_r(m_bar, w);
 
     // todo multiplication mod q
-    let a_bar_i64 = a_bar.mapv(|x| i64::from(x));
-    let r_i64 = r.mapv(|x| i64::from(x));
+    let a_bar_i64 = a_bar.mapv(i64::from);
+    let r_i64 = r.mapv(i64::from);
     let a_2 = g - a_bar_i64.dot(&r_i64);
     let a_2 = a_2.mapv_into_any(|x| {
         let x = x.rem_euclid(q.try_into().unwrap());
