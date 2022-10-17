@@ -33,4 +33,12 @@ mod tests {
             array![[1, 2, 4, 8, 0, 0, 0, 0], [0, 0, 0, 0, 1, 2, 4, 8]]
         )
     }
+
+    #[test]
+    fn gadget_matrix_larger() {
+        assert_eq!(
+            gen_gadget_matrix(3, 2),
+            array![[1, 2, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 0, 0, 1, 2]]
+        )
+    }
 }

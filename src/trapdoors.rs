@@ -3,6 +3,7 @@ use ndarray::Array2;
 use ndarray::Axis;
 
 mod gadget;
+mod gadget_lattice;
 mod sample;
 
 pub fn gen_trap() -> (Array2<u32>, Array2<i32>) {
