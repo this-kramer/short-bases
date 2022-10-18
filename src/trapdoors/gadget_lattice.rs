@@ -1,8 +1,9 @@
-use bitvec::prelude::*;
+use crate::trapdoors::util::integer_to_bits;
 use ndarray::linalg::kron;
-/// Gadget basis S_k from trapdoor paper
 use ndarray::Array1;
 use ndarray::Array2;
+
+/// Gadget basis S_k from trapdoor paper
 
 pub fn generate_full_gadget_basis(q: u32, k: usize, n: usize) -> Array2<i32> {
     let single_gadget_basis = generate_gadget_basis(q, k);
@@ -26,15 +27,6 @@ fn generate_gadget_basis(q: u32, k: usize) -> Array2<i32> {
     basis.column_mut(k - 1).assign(&last_column);
 
     basis
-}
-
-/// Returns an array of bools representing the bits of q starting with the first bit that is 1
-fn integer_to_bits(q: u32) -> Array1<i32> {
-    q.view_bits::<Msb0>()
-        .into_iter()
-        .skip_while(|x| !x.as_ref())
-        .map(|x| (*x).into())
-        .collect()
 }
 
 #[cfg(test)]

@@ -1,0 +1,38 @@
+use flint_sys::nmod_mat;
+use flint_sys::nmod_mat::nmod_mat_struct;
+use std::mem::MaybeUninit;
+
+fn uniform_matrix(n: usize, m: usize, q: u32) {
+    let mut matrix = MaybeUninit::uninit();
+    unsafe {
+        nmod_mat::nmod_mat_init(
+            matrix.as_mut_ptr(),
+            n.try_into().unwrap(),
+            m.try_into().unwrap(),
+            q.try_into().unwrap(),
+        );
+        for i in 0..n {
+            for j in 0..m {
+                nmod_mat::nmod_mat_set_entry(
+                    matrix.as_mut_ptr(),
+                    i.try_into().unwrap(),
+                    j.try_into().unwrap(),
+                    (i + j).try_into().unwrap(),
+                )
+            }
+        }
+        nmod_mat::nmod_mat_print_pretty(matrix.as_mut_ptr());
+        nmod_mat::nmod_mat_clear(matrix.as_mut_ptr());
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::zq::uniform_matrix;
+
+    #[test]
+    fn print() {
+        uniform_matrix(10, 20, 376);
+        assert!(false);
+    }
+}

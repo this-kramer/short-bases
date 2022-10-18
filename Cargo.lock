@@ -175,6 +175,7 @@ dependencies = [
  "bitvec",
  "flint-sys",
  "ndarray",
+ "num-traits",
  "rand",
 ]
 
