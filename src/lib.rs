@@ -1,6 +1,7 @@
 mod gadget;
 mod gadget_lattice;
-pub mod matrix_with_trapdoor;
+pub mod matrix_with_short_basis;
+mod matrix_with_trapdoor;
 mod matrix_with_trapdoor_basis;
 mod sample;
 mod util;
@@ -22,12 +23,12 @@ impl GadgetParameters {
         assert!(m >= w);
         assert!(w >= n);
         Self {
-            q: q,
-            k: k,
-            n: n,
-            m: m,
-            m_bar: m_bar,
-            w: w,
+            q,
+            k,
+            n,
+            m,
+            m_bar,
+            w,
         }
     }
 }

@@ -6,21 +6,16 @@ use ndarray::Array2;
 use ndarray::Axis;
 
 /// Generates A, R where R is a G-trapdoor for A and A is statistically close to uniform.
-pub fn gen_trap(params: GadgetParameters) -> (Array2<u32>, Array2<i32>) {
-    let q: u32 = 13;
+pub fn gen_trap(params: &GadgetParameters) -> (Array2<u32>, Array2<i32>) {
+    let q: u32 = params.q;
     // k = ceil(log(q))
-    let k: usize = (32 - q.trailing_zeros()).try_into().unwrap();
+    let k: usize = params.k;
     // A=[A_bar|A_2] has dimension n x m
-    let n = 3;
+    let n = params.n;
     // w #columns of of A_2
-    let w = n * k;
+    let w = params.w;
     // A_bar has dimension n x m_bar
-    let m_bar = 3;
-    // m = m_bar + w
-    let m = m_bar + w;
-
-    assert!(m >= w);
-    assert!(w >= n);
+    let m_bar = params.m_bar;
 
     let g = gadget::gen_gadget_matrix(n, k);
     let g = g.mapv(i64::from);

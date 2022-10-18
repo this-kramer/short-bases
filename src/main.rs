@@ -1,11 +1,12 @@
-use short_bases::{matrix_with_trapdoor, GadgetParameters};
-fn main() {
-    let params = GadgetParameters::new(17, 3, 4);
-    let (a, r) = matrix_with_trapdoor::gen_trap(params);
+use short_bases::{matrix_with_short_basis::generate, GadgetParameters};
 
-    println!("R");
-    println!("{}", &r);
+fn main() {
+    let params = GadgetParameters::new(17, 3, 5);
+    let (a, s_a) = generate(&params);
 
     println!("A");
     println!("{}", &a);
+
+    println!("S_A");
+    println!("{}", &s_a);
 }

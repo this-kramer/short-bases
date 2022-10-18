@@ -1,8 +1,6 @@
 use std::ops::Add;
-use std::ops::Mul;
 use std::ops::Neg;
 
-use ndarray::array;
 use ndarray::s;
 use ndarray::Array1;
 use ndarray::Array2;
@@ -12,25 +10,25 @@ use crate::util;
 use crate::GadgetParameters;
 
 pub fn short_basis_for_lattice_with_trapdoor(
-    a: Array2<u32>,
-    r: Array2<i32>,
-    params: GadgetParameters,
+    a: &Array2<u32>,
+    r: &Array2<i32>,
+    params: &GadgetParameters,
 ) -> Array2<i32> {
     let s = gadget_lattice::generate_full_gadget_basis(params.q, params.k, params.n);
-    let w = compute_w_matrix(a, params.n, params.k);
-    short_basis(r, w, s, params.m, params.w)
+    let w = compute_w_matrix(a, params.n, params.k, params.m_bar);
+    short_basis(r, &w, &s, params.m, params.w)
 }
 
 /// Compute S=[[I, R], [0, I]] * [[I, 0], [W, S]]
 fn short_basis(
-    r: Array2<i32>,
-    w: Array2<i32>,
-    s: Array2<i32>,
+    r: &Array2<i32>,
+    w: &Array2<i32>,
+    s: &Array2<i32>,
     m: usize,
     w_dim: usize,
 ) -> Array2<i32> {
-    let rw = r.dot(&w);
-    let rs = r.dot(&s);
+    let rw = r.dot(w);
+    let rs = r.dot(s);
     let mut s_a: Array2<i32> = Array2::zeros((m, m));
 
     let mut upper_left = s_a.slice_mut(s![..(m - w_dim), ..(m - w_dim)]);
@@ -41,25 +39,25 @@ fn short_basis(
     upper_right.assign(&rs);
 
     let mut lower_left = s_a.slice_mut(s![(m - w_dim).., ..(m - w_dim)]);
-    lower_left.assign(&w);
+    lower_left.assign(w);
 
     let mut lower_right = s_a.slice_mut(s![(m - w_dim).., (m - w_dim)..]);
-    lower_right.assign(&s);
+    lower_right.assign(s);
 
     s_a
 }
 
 /// A m*n
 /// R (m-w)*w
-/// G w*m_bar
-fn compute_w_matrix(a: Array2<u32>, n: usize, k: usize) -> Array2<i32> {
+/// W w*m_bar
+fn compute_w_matrix(a: &Array2<u32>, n: usize, k: usize, m_bar: usize) -> Array2<i32> {
     // First sqaure matrix of a
-    let a = a.slice(s![.., 0..n]);
-    let mut w: Array2<i32> = Array2::zeros((k * n, n));
+    let a = a.slice(s![.., ..m_bar]);
+    let mut w: Array2<i32> = Array2::zeros((k * n, m_bar));
     for (i, row) in a.rows().into_iter().enumerate() {
         for (j, a_ij) in row.iter().enumerate() {
             let a_ij_binary: Array1<i32> = util::integer_to_bits_array_of_size(*a_ij, k);
-            w.slice_mut(s![(k * i)..(k * (i + 1)), j])
+            w.slice_mut(s![(k * i)..(k * (i + 1));-1, j])
                 .assign(&a_ij_binary);
         }
     }
@@ -68,26 +66,23 @@ fn compute_w_matrix(a: Array2<u32>, n: usize, k: usize) -> Array2<i32> {
 
 #[cfg(test)]
 mod test {
-    use super::{compute_w_matrix, short_basis};
-    use ndarray::{arr1, array};
+    use std::ops::Neg;
+
+    use super::{compute_w_matrix};
+    use ndarray::array;
 
     #[test]
     fn correctness() {
-        let expected = array![[0, 0], [0, -1], [-1, 0], [-1, -1], [0, 0], [0, -1]];
-        let result = compute_w_matrix(array![[1, 2, 3], [4, 5, 6]], 2, 3);
+        let expected = array![
+            [1, 0, 1],
+            [0, 1, 1],
+            [0, 0, 0],
+            [1, 0, 1],
+            [0, 1, 1],
+            [1, 1, 1]
+        ]
+        .neg();
+        let result = compute_w_matrix(&array![[1, 2, 3, 4], [5, 6, 7, 0]], 2, 3, 3);
         assert_eq!(expected, result);
-    }
-
-    #[test]
-    fn short_bases() {
-        let m = 5;
-        let w_dim = 2;
-        let r = array![[1, -2], [0, 1], [-1, 0]];
-        let w = array![[1, -2, 1], [-1, 0, 1]];
-        let s = array![[1, 2], [-1, -2]];
-        let result = short_basis(r, w, s, m, w_dim);
-        println!("{}", result);
-
-        assert!(false);
     }
 }

@@ -24,7 +24,7 @@ pub fn integer_to_bits_array_of_size(u: u32, k: usize) -> Array1<i32> {
 /// Compute the logarithm and round up to the next integer
 pub fn log_ceil(x: u32) -> u32 {
     assert_ne!(x, 0, "Solution does not exist!");
-    31 - x.leading_zeros()
+    32 - x.checked_sub(1).unwrap().leading_zeros()
 }
 
 #[cfg(test)]
@@ -44,7 +44,9 @@ mod tests {
     fn log_valid() {
         assert_eq!(log_ceil(1), 0);
         assert_eq!(log_ceil(2), 1);
-        assert_eq!(log_ceil(3), 1);
+        assert_eq!(log_ceil(3), 2);
+        assert_eq!(log_ceil(4), 2);
+        assert_eq!(log_ceil(5), 3);
         assert_eq!(log_ceil(16), 4);
     }
 
