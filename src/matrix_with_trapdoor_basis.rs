@@ -7,7 +7,19 @@ use ndarray::s;
 use ndarray::Array1;
 use ndarray::Array2;
 
-use crate::trapdoors::util;
+use crate::gadget_lattice;
+use crate::util;
+use crate::GadgetParameters;
+
+pub fn short_basis_for_lattice_with_trapdoor(
+    a: Array2<u32>,
+    r: Array2<i32>,
+    params: GadgetParameters,
+) -> Array2<i32> {
+    let s = gadget_lattice::generate_full_gadget_basis(params.q, params.k, params.n);
+    let w = compute_w_matrix(a, params.n, params.k);
+    short_basis(r, w, s, params.m, params.w)
+}
 
 /// Compute S=[[I, R], [0, I]] * [[I, 0], [W, S]]
 fn short_basis(

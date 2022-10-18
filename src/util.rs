@@ -21,9 +21,15 @@ pub fn integer_to_bits_array_of_size(u: u32, k: usize) -> Array1<i32> {
         .collect()
 }
 
+/// Compute the logarithm and round up to the next integer
+pub fn log_ceil(x: u32) -> u32 {
+    assert_ne!(x, 0, "Solution does not exist!");
+    31 - x.leading_zeros()
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::trapdoors::util::integer_to_bits_array_of_size;
+    use crate::util::{integer_to_bits_array_of_size, log_ceil};
 
     use super::integer_to_bits;
     use ndarray::array;
@@ -32,5 +38,19 @@ mod tests {
     fn q_decomposition() {
         assert_eq!(integer_to_bits(6), array![1, 1, 0]);
         assert_eq!(integer_to_bits_array_of_size(6, 3), array![1, 1, 0]);
+    }
+
+    #[test]
+    fn log_valid() {
+        assert_eq!(log_ceil(1), 0);
+        assert_eq!(log_ceil(2), 1);
+        assert_eq!(log_ceil(3), 1);
+        assert_eq!(log_ceil(16), 4);
+    }
+
+    #[test]
+    #[should_panic]
+    fn log_zero() {
+        log_ceil(0);
     }
 }

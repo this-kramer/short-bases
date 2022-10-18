@@ -1,10 +1,12 @@
-use crate::trapdoors::gadget;
-use crate::trapdoors::sample;
+use crate::gadget;
+use crate::sample;
+use crate::GadgetParameters;
 use ndarray::concatenate;
 use ndarray::Array2;
 use ndarray::Axis;
 
-pub fn gen_trap() -> (Array2<u32>, Array2<i32>) {
+/// Generates A, R where R is a G-trapdoor for A and A is statistically close to uniform.
+pub fn gen_trap(params: GadgetParameters) -> (Array2<u32>, Array2<i32>) {
     let q: u32 = 13;
     // k = ceil(log(q))
     let k: usize = (32 - q.trailing_zeros()).try_into().unwrap();

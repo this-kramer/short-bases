@@ -1,4 +1,4 @@
-use crate::trapdoors::util::integer_to_bits;
+use crate::util::integer_to_bits;
 use ndarray::linalg::kron;
 
 use ndarray::Array2;
@@ -31,7 +31,7 @@ fn generate_gadget_basis(q: u32, k: usize) -> Array2<i32> {
 
 #[cfg(test)]
 mod tests {
-    use crate::trapdoors::gadget_lattice::integer_to_bits;
+    use crate::gadget_lattice::integer_to_bits;
     use ndarray::array;
 
     use super::{generate_full_gadget_basis, generate_gadget_basis};
