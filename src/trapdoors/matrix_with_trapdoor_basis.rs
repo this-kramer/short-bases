@@ -1,3 +1,5 @@
+use std::ops::Add;
+use std::ops::Mul;
 use std::ops::Neg;
 
 use ndarray::array;
@@ -7,8 +9,32 @@ use ndarray::Array2;
 
 use crate::trapdoors::util;
 
-fn short_basis(a: Array2<u32>, r: Array2<i32>) -> Array2<i32> {
-    array![[1]]
+/// Compute S=[[I, R], [0, I]] * [[I, 0], [W, S]]
+fn short_basis(
+    r: Array2<i32>,
+    w: Array2<i32>,
+    s: Array2<i32>,
+    m: usize,
+    w_dim: usize,
+) -> Array2<i32> {
+    let rw = r.dot(&w);
+    let rs = r.dot(&s);
+    let mut s_a: Array2<i32> = Array2::zeros((m, m));
+
+    let mut upper_left = s_a.slice_mut(s![..(m - w_dim), ..(m - w_dim)]);
+    let eye: Array2<i32> = Array2::eye(m - w_dim);
+    upper_left.assign(&eye.add(rw));
+
+    let mut upper_right = s_a.slice_mut(s![..(m - w_dim), (m - w_dim)..]);
+    upper_right.assign(&rs);
+
+    let mut lower_left = s_a.slice_mut(s![(m - w_dim).., ..(m - w_dim)]);
+    lower_left.assign(&w);
+
+    let mut lower_right = s_a.slice_mut(s![(m - w_dim).., (m - w_dim)..]);
+    lower_right.assign(&s);
+
+    s_a
 }
 
 /// A m*n
@@ -30,13 +56,26 @@ fn compute_w_matrix(a: Array2<u32>, n: usize, k: usize) -> Array2<i32> {
 
 #[cfg(test)]
 mod test {
-    use super::compute_w_matrix;
-    use ndarray::array;
+    use super::{compute_w_matrix, short_basis};
+    use ndarray::{arr1, array};
 
     #[test]
     fn correctness() {
         let expected = array![[0, 0], [0, -1], [-1, 0], [-1, -1], [0, 0], [0, -1]];
         let result = compute_w_matrix(array![[1, 2, 3], [4, 5, 6]], 2, 3);
         assert_eq!(expected, result);
+    }
+
+    #[test]
+    fn short_bases() {
+        let m = 5;
+        let w_dim = 2;
+        let r = array![[1, -2], [0, 1], [-1, 0]];
+        let w = array![[1, -2, 1], [-1, 0, 1]];
+        let s = array![[1, 2], [-1, -2]];
+        let result = short_basis(r, w, s, m, w_dim);
+        println!("{}", result);
+
+        assert!(false);
     }
 }

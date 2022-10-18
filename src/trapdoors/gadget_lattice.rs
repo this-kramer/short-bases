@@ -1,6 +1,6 @@
 use crate::trapdoors::util::integer_to_bits;
 use ndarray::linalg::kron;
-use ndarray::Array1;
+
 use ndarray::Array2;
 
 /// Gadget basis S_k from trapdoor paper
