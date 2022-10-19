@@ -68,7 +68,7 @@ fn compute_w_matrix(a: &Array2<u32>, n: usize, k: usize, m_bar: usize) -> Array2
 mod test {
     use std::ops::Neg;
 
-    use super::{compute_w_matrix};
+    use super::compute_w_matrix;
     use ndarray::array;
 
     #[test]
