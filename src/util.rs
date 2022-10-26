@@ -29,8 +29,8 @@ pub fn log_ceil(x: u32) -> u32 {
 }
 
 /// Sample a matrix with entries drawn uniformly at random from ZZ_q
-pub fn sample_uniform_matrix(n: usize, m_bar: usize, q: u32) -> Array2<u32> {
-    Array2::from_shape_simple_fn((n, m_bar), || uniform_element_zq(q))
+pub fn sample_uniform_matrix(rows: usize, columns: usize, q: u32) -> Array2<u32> {
+    Array2::from_shape_simple_fn((rows, columns), || uniform_element_zq(q))
 }
 
 /// Sample an element uniformly at random from ZZ_q
@@ -40,11 +40,11 @@ fn uniform_element_zq(q: u32) -> u32 {
 
 /// Samples a matrix with entries in -1,0,+1
 pub fn sample_matrix_from_distribution(
-    m_bar: usize,
-    w: usize,
+    rows: usize,
+    columns: usize,
     t: &dyn TrapdoorDistribution,
 ) -> Array2<i32> {
-    Array2::from_shape_simple_fn((m_bar, w), || t.sample_element())
+    Array2::from_shape_simple_fn((rows, columns), || t.sample_element())
 }
 
 /// Trait for defining custom trapdoor distributions

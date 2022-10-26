@@ -11,6 +11,7 @@ use std::ops::Neg;
 use ndarray::s;
 use ndarray::Array1;
 
+/// Generate A together with a short basis s_a for the lattice Lambda^perp(A)
 pub fn generate(params: &GadgetParameters) -> (Array2<u32>, Array2<i32>) {
     let (a, r) = gen_trap(params);
     let s_a = short_basis_for_lattice_with_trapdoor(&a, &r, params);
@@ -18,7 +19,7 @@ pub fn generate(params: &GadgetParameters) -> (Array2<u32>, Array2<i32>) {
 }
 
 /// Generates A, R where R is a G-trapdoor for A and A is statistically close to uniform.
-pub fn gen_trap(params: &GadgetParameters) -> (Array2<u32>, Array2<i32>) {
+fn gen_trap(params: &GadgetParameters) -> (Array2<u32>, Array2<i32>) {
     let q: u32 = params.q;
     // k = ceil(log(q))
     let k: usize = params.k;
@@ -48,7 +49,7 @@ pub fn gen_trap(params: &GadgetParameters) -> (Array2<u32>, Array2<i32>) {
     (a, r)
 }
 
-pub fn short_basis_for_lattice_with_trapdoor(
+fn short_basis_for_lattice_with_trapdoor(
     a: &Array2<u32>,
     r: &Array2<i32>,
     params: &GadgetParameters,
@@ -86,9 +87,6 @@ fn short_basis(
     s_a
 }
 
-/// A m*n
-/// R (m-w)*w
-/// W w*m_bar
 fn compute_w_matrix(a: &Array2<u32>, n: usize, k: usize, m_bar: usize) -> Array2<i32> {
     // First sqaure matrix of a
     let a = a.slice(s![.., ..m_bar]);
