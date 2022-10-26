@@ -1,13 +1,4 @@
-mod gadget;
-mod gadget_lattice;
-mod matrix_with_short_basis;
-mod matrix_with_trapdoor;
-mod matrix_with_trapdoor_basis;
-mod sample;
-mod util;
-
-pub use matrix_with_short_basis::generate;
-
+use crate::util;
 pub struct GadgetParameters {
     q: u32,
     k: usize,
