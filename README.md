@@ -1,6 +1,6 @@
 # Random Lattice with Short Basis Generator
 
-Generate a statistically close to uniform matrix A together with a short basis for the lattice Lambda^perp(A).
+Generate a matrix A together with a short basis for the lattice Lambda^perp(A).
 
 This implementation is based on [MP11](https://eprint.iacr.org/2011/501):
  - We generate a matrix A with G-Trapdoor R.
