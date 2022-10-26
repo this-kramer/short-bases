@@ -1,7 +1,10 @@
-use short_bases;
-
 fn main() {
-    let params = short_bases::GadgetParameters::new(8389559, 256, 100);
+    let params = short_bases::GadgetParameters::new(
+        8389559,
+        32,
+        64,
+        Box::new(short_bases::PlusMinusOneZero),
+    );
     let (a, s_a) = short_bases::generate(&params);
 
     println!("A");

@@ -1,12 +1,10 @@
 mod gadget;
-mod gadget_lattice;
-mod matrix_with_short_basis;
-mod matrix_with_trapdoor;
-mod matrix_with_trapdoor_basis;
-mod sample;
+mod generation;
 mod util;
 
-pub use matrix_with_short_basis::generate;
+pub use crate::util::PlusMinusOneZero;
+pub use crate::util::TrapdoorDistribution;
+pub use generation::generate;
 
 pub struct GadgetParameters {
     q: u32,
@@ -15,10 +13,16 @@ pub struct GadgetParameters {
     m: usize,
     m_bar: usize,
     w: usize,
+    trapdoor_distribution: Box<dyn TrapdoorDistribution>,
 }
 
 impl GadgetParameters {
-    pub fn new(q: u32, n: usize, m_bar: usize) -> Self {
+    pub fn new(
+        q: u32,
+        n: usize,
+        m_bar: usize,
+        trapdoor_distribution: Box<dyn TrapdoorDistribution>,
+    ) -> Self {
         let k = util::log_ceil(q).try_into().unwrap();
         let w = n * k;
         let m = m_bar + w;
@@ -31,6 +35,7 @@ impl GadgetParameters {
             m,
             m_bar,
             w,
+            trapdoor_distribution,
         }
     }
 }
