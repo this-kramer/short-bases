@@ -23,8 +23,9 @@ pub fn integer_to_bits_array_of_size(u: u32, k: usize) -> Array1<i32> {
 }
 
 /// Compute the logarithm and round up to the next integer
-pub fn log_ceil(x: u32) -> u32 {
-    assert_ne!(x, 0, "Solution does not exist!");
+/// Needs to satisfy `x<2^k` for k being the return value
+pub fn plus_one_and_log_ceil(x: u32) -> u32 {
+    let x = x + 1; // Add 1 to adhere to definition in MP11
     32 - x.checked_sub(1).unwrap().leading_zeros()
 }
 
@@ -72,7 +73,7 @@ impl TrapdoorDistribution for PlusMinusOneZero {
 
 #[cfg(test)]
 mod tests {
-    use crate::util::{integer_to_bits_array_of_size, log_ceil};
+    use crate::util::{integer_to_bits_array_of_size, plus_one_and_log_ceil};
 
     use super::integer_to_bits;
     use ndarray::array;
@@ -84,18 +85,19 @@ mod tests {
     }
 
     #[test]
-    fn log_valid() {
-        assert_eq!(log_ceil(1), 0);
-        assert_eq!(log_ceil(2), 1);
-        assert_eq!(log_ceil(3), 2);
-        assert_eq!(log_ceil(4), 2);
-        assert_eq!(log_ceil(5), 3);
-        assert_eq!(log_ceil(16), 4);
+    fn log_powers_of_two() {
+        assert_eq!(plus_one_and_log_ceil(1), 1);
+        assert_eq!(plus_one_and_log_ceil(2), 2);
+        assert_eq!(plus_one_and_log_ceil(4), 3);
+        assert_eq!(plus_one_and_log_ceil(8), 4);
+        assert_eq!(plus_one_and_log_ceil(16), 5);
     }
 
     #[test]
-    #[should_panic]
-    fn log_zero() {
-        log_ceil(0);
+    fn log_intermediate_values() {
+        assert_eq!(plus_one_and_log_ceil(3), 2);
+        assert_eq!(plus_one_and_log_ceil(5), 3);
+        assert_eq!(plus_one_and_log_ceil(6), 3);
+        assert_eq!(plus_one_and_log_ceil(7), 3);
     }
 }
